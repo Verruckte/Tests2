@@ -7,42 +7,52 @@ import android.widget.TextView.OnEditorActionListener
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.geekbrains.tests.R
+import com.geekbrains.tests.databinding.ActivityMainBinding
 import com.geekbrains.tests.model.SearchResult
 import com.geekbrains.tests.presenter.search.PresenterSearchContract
 import com.geekbrains.tests.presenter.search.SearchPresenter
 import com.geekbrains.tests.repository.GitHubApi
 import com.geekbrains.tests.repository.GitHubRepository
 import com.geekbrains.tests.view.details.DetailsActivity
-import kotlinx.android.synthetic.main.activity_main.*
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
 class MainActivity : AppCompatActivity(), ViewSearchContract {
 
+    private var binding: ActivityMainBinding? = null
     private val adapter = SearchResultAdapter()
     private val presenter: PresenterSearchContract = SearchPresenter(this, createRepository())
     private var totalCount: Int = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
+        binding = ActivityMainBinding.inflate(layoutInflater).also {
+            setContentView(it.root)
+            presenter.onAttach(it.root)
+        }
         setUI()
     }
 
+    override fun onDestroy() {
+        presenter.onDetach()
+        binding = null
+        super.onDestroy()
+    }
+
     private fun setUI() {
-        toDetailsActivityButton.setOnClickListener {
+        binding?.toDetailsActivityButton?.setOnClickListener {
             startActivity(DetailsActivity.getIntent(this, totalCount))
         }
         setQueryListener()
         setRecyclerView()
     }
 
-    private fun setRecyclerView() {
+    private fun setRecyclerView() = binding?.run {
         recyclerView.setHasFixedSize(true)
         recyclerView.adapter = adapter
     }
 
-    private fun setQueryListener() {
+    private fun setQueryListener() = binding?.run {
         searchEditText.setOnEditorActionListener(OnEditorActionListener { _, actionId, _ ->
             if (actionId == EditorInfo.IME_ACTION_SEARCH) {
                 val query = searchEditText.text.toString()
@@ -90,11 +100,10 @@ class MainActivity : AppCompatActivity(), ViewSearchContract {
     }
 
     override fun displayLoading(show: Boolean) {
-        if (show) {
-            progressBar.visibility = View.VISIBLE
-        } else {
-            progressBar.visibility = View.GONE
-        }
+        binding?.progressBar?.visibility = if (show)
+            View.VISIBLE
+        else
+            View.GONE
     }
 
     companion object {
