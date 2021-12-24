@@ -1,11 +1,13 @@
 package com.geekbrains.tests.view.search
 
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import com.geekbrains.tests.databinding.ListItemBinding
+import com.geekbrains.tests.R
 import com.geekbrains.tests.model.SearchResult
 import com.geekbrains.tests.view.search.SearchResultAdapter.SearchResultViewHolder
+import kotlinx.android.synthetic.main.list_item.view.*
 
 internal class SearchResultAdapter : RecyclerView.Adapter<SearchResultViewHolder>() {
 
@@ -16,11 +18,7 @@ internal class SearchResultAdapter : RecyclerView.Adapter<SearchResultViewHolder
         viewType: Int
     ): SearchResultViewHolder {
         return SearchResultViewHolder(
-            ListItemBinding.inflate(
-                LayoutInflater.from(parent.context),
-                parent,
-                false
-            )
+            LayoutInflater.from(parent.context).inflate(R.layout.list_item, null)
         )
     }
 
@@ -40,12 +38,10 @@ internal class SearchResultAdapter : RecyclerView.Adapter<SearchResultViewHolder
         notifyDataSetChanged()
     }
 
-    internal class SearchResultViewHolder(
-        private val binding: ListItemBinding
-    ) : RecyclerView.ViewHolder(binding.root) {
+    internal class SearchResultViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
 
         fun bind(searchResult: SearchResult) {
-            binding.repositoryName.text = searchResult.fullName
+            itemView.repositoryName.text = searchResult.fullName
         }
     }
 }

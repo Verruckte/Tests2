@@ -1,9 +1,9 @@
 package com.geekbrains.tests.presenter.search
 
-import android.view.View
 import com.geekbrains.tests.model.SearchResponse
-import com.geekbrains.tests.repository.GitHubRepository
-import com.geekbrains.tests.repository.GitHubRepository.GitHubRepositoryCallback
+import com.geekbrains.tests.presenter.RepositoryContract
+import com.geekbrains.tests.repository.RepositoryCallback
+import com.geekbrains.tests.view.ViewContract
 import com.geekbrains.tests.view.search.ViewSearchContract
 import retrofit2.Response
 
@@ -17,23 +17,22 @@ import retrofit2.Response
 
 internal class SearchPresenter internal constructor(
     private val viewContract: ViewSearchContract,
-    private val repository: GitHubRepository
-) : PresenterSearchContract, GitHubRepositoryCallback {
-    private var view: View? = null
+    private val repository: RepositoryContract
+) : PresenterSearchContract, RepositoryCallback {
+
+    var viewSearchContract: ViewContract? = null
 
     override fun searchGitHub(searchQuery: String) {
         viewContract.displayLoading(true)
         repository.searchGithub(searchQuery, this)
     }
 
-    override fun onAttach(view: View) {
-        this.view = view
-        println("SearchPresenter onAttach")
+    override fun onAttach(view: ViewContract) {
+        viewSearchContract = view
     }
 
     override fun onDetach() {
-        view = null
-        println("SearchPresenter onDetach")
+        viewSearchContract = null
     }
 
     override fun handleGitHubResponse(response: Response<SearchResponse?>?) {

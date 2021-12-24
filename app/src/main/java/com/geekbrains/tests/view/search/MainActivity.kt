@@ -7,52 +7,51 @@ import android.widget.TextView.OnEditorActionListener
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.geekbrains.tests.R
-import com.geekbrains.tests.databinding.ActivityMainBinding
 import com.geekbrains.tests.model.SearchResult
+import com.geekbrains.tests.presenter.RepositoryContract
 import com.geekbrains.tests.presenter.search.PresenterSearchContract
 import com.geekbrains.tests.presenter.search.SearchPresenter
-import com.geekbrains.tests.repository.GitHubApi
-import com.geekbrains.tests.repository.GitHubRepository
+import com.geekbrains.tests.repository.RepositoryContractFactory
 import com.geekbrains.tests.view.details.DetailsActivity
-import retrofit2.Retrofit
-import retrofit2.converter.gson.GsonConverterFactory
+import kotlinx.android.synthetic.main.activity_main.*
+import java.util.*
 
 class MainActivity : AppCompatActivity(), ViewSearchContract {
 
-    private var binding: ActivityMainBinding? = null
     private val adapter = SearchResultAdapter()
     private val presenter: PresenterSearchContract = SearchPresenter(this, createRepository())
     private var totalCount: Int = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        binding = ActivityMainBinding.inflate(layoutInflater).also {
-            setContentView(it.root)
-            presenter.onAttach(it.root)
-        }
+        setContentView(R.layout.activity_main)
         setUI()
     }
 
-    override fun onDestroy() {
-        presenter.onDetach()
-        binding = null
-        super.onDestroy()
-    }
-
     private fun setUI() {
-        binding?.toDetailsActivityButton?.setOnClickListener {
+        toDetailsActivityButton.setOnClickListener {
             startActivity(DetailsActivity.getIntent(this, totalCount))
         }
         setQueryListener()
         setRecyclerView()
     }
 
-    private fun setRecyclerView() = binding?.run {
+    override fun onStart() {
+        super.onStart()
+        presenter.onAttach(this)
+    }
+
+    override fun onDestroy() {
+        presenter.onDetach()
+        super.onDestroy()
+    }
+
+    private fun setRecyclerView() {
         recyclerView.setHasFixedSize(true)
         recyclerView.adapter = adapter
     }
 
-    private fun setQueryListener() = binding?.run {
+    private fun setQueryListener() {
         searchEditText.setOnEditorActionListener(OnEditorActionListener { _, actionId, _ ->
             if (actionId == EditorInfo.IME_ACTION_SEARCH) {
                 val query = searchEditText.text.toString()
@@ -72,21 +71,21 @@ class MainActivity : AppCompatActivity(), ViewSearchContract {
         })
     }
 
-    private fun createRepository(): GitHubRepository {
-        return GitHubRepository(createRetrofit().create(GitHubApi::class.java))
+    private fun createRepository(): RepositoryContract {
+        return RepositoryContractFactory().createRepository()
     }
 
-    private fun createRetrofit(): Retrofit {
-        return Retrofit.Builder()
-            .baseUrl(BASE_URL)
-            .addConverterFactory(GsonConverterFactory.create())
-            .build()
-    }
 
     override fun displaySearchResults(
         searchResults: List<SearchResult>,
         totalCount: Int
     ) {
+        with(totalCountTextView) {
+            visibility = View.VISIBLE
+            text =
+                String.format(Locale.getDefault(), getString(R.string.results_count), totalCount)
+        }
+
         this.totalCount = totalCount
         adapter.updateResults(searchResults)
     }
@@ -100,13 +99,11 @@ class MainActivity : AppCompatActivity(), ViewSearchContract {
     }
 
     override fun displayLoading(show: Boolean) {
-        binding?.progressBar?.visibility = if (show)
-            View.VISIBLE
-        else
-            View.GONE
+        if (show) {
+            progressBar.visibility = View.VISIBLE
+        } else {
+            progressBar.visibility = View.GONE
+        }
     }
 
-    companion object {
-        const val BASE_URL = "https://api.github.com"
-    }
 }

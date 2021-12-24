@@ -6,4 +6,5 @@ internal interface PresenterDetailsContract : PresenterContract {
     fun setCounter(count: Int)
     fun onIncrement()
     fun onDecrement()
+    fun getCounter(): Int
 }
