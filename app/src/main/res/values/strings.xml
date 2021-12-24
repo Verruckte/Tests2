@@ -1,5 +1,10 @@
 <resources>
     <string name="app_name">Tests</string>
+    <string name="email_label">Your Email address:</string>
+    <string name="save">Save</string>
+    <string name="email_hint">Enter your Email</string>
+    <string name="invalid_email">Invalid email</string>
+    <string name="valid_email">OK</string>
     <string name="repo_full_name">repo full name</string>
     <string name="search_hint">Enter keyword e.g. android</string>
     <string name="enter_search_word">Enter search word</string>
