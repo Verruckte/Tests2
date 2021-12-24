@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Tests</string>
+    <string name="app_name">AppTests</string>
     <string name="repo_full_name">repo full name</string>
     <string name="search_hint">Enter keyword e.g. android</string>
     <string name="enter_search_word">Enter search word</string>
@@ -8,4 +8,5 @@
     <string name="decrement_text">-</string>
     <string name="increment_text">+</string>
     <string name="to_details">to details</string>
+    <string name="search_data">Search</string>
 </resources>

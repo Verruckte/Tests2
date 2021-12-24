@@ -1,5 +1,6 @@
 package com.geekbrains.tests.presenter.details
 
+import com.geekbrains.tests.view.ViewContract
 import com.geekbrains.tests.view.details.ViewDetailsContract
 
 internal class DetailsPresenter internal constructor(
@@ -7,9 +8,24 @@ internal class DetailsPresenter internal constructor(
     private var count: Int = 0
 ) : PresenterDetailsContract {
 
+    var viewDetailsContract: ViewContract? = null
+
     override fun setCounter(count: Int) {
         this.count = count
     }
+
+    override fun onAttach(view: ViewContract) {
+        viewDetailsContract = view
+    }
+
+    override fun onDetach() {
+        viewDetailsContract = null
+    }
+
+    override fun getCounter(): Int {
+        return count
+    }
+
 
     override fun onIncrement() {
         count++
