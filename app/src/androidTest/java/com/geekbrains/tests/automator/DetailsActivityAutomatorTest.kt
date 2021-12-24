@@ -1,0 +1,110 @@
+package com.geekbrains.tests.automator
+
+import android.content.Context
+import android.content.Intent
+import androidx.test.core.app.ApplicationProvider
+import androidx.test.platform.app.InstrumentationRegistry
+import androidx.test.uiautomator.By
+import androidx.test.uiautomator.UiDevice
+import androidx.test.uiautomator.Until
+import com.geekbrains.tests.*
+import com.geekbrains.tests.TEST_NUMBER_OF_RESULTS_MINUS_1
+import com.geekbrains.tests.TEST_NUMBER_OF_RESULTS_PLUS_1
+import com.geekbrains.tests.TEST_NUMBER_OF_RESULTS_ZERO
+import com.geekbrains.tests.WAIT_TIMEOUT
+import junit.framework.TestCase.assertEquals
+import junit.framework.TestCase.assertNotNull
+import org.junit.Assert.assertNotEquals
+import org.junit.Before
+import org.junit.Test
+
+class DetailsActivityAutomatorTest {
+
+    private val uiDevice: UiDevice =
+        UiDevice.getInstance(InstrumentationRegistry.getInstrumentation())
+
+    private val context = ApplicationProvider.getApplicationContext<Context>()
+
+    private val packageName = context.packageName
+
+    @Before
+    fun setUp() {
+        uiDevice.pressHome()
+        val intent = context.packageManager.getLaunchIntentForPackage(packageName)
+        intent!!.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
+        context.startActivity(intent)
+
+        uiDevice.wait(Until.hasObject(By.pkg(packageName).depth(0)), WAIT_TIMEOUT)
+
+        val toDetails = uiDevice.findObject(By.res(packageName, "toDetailsActivityButton"))
+
+        toDetails.click()
+    }
+
+    @Test
+    fun test_decrementButtonNotNUll() {
+
+        val decrementButton =
+            uiDevice.wait(Until.findObject(By.res(packageName, DECREMENT_BUTTON_NAME)), WAIT_TIMEOUT)
+
+        assertNotNull(decrementButton)
+    }
+
+    @Test
+    fun test_incrementButtonNotNUll() {
+
+        val incrementButton =
+            uiDevice.wait(Until.findObject(By.res(packageName, INCREMENT_BUTTON_NAME)), WAIT_TIMEOUT)
+
+        assertNotNull(incrementButton)
+    }
+
+    @Test
+    fun test_decrementButtonIsWork() {
+
+        val decrementButton =
+            uiDevice.wait(Until.findObject(By.res(packageName, DECREMENT_BUTTON_NAME)), WAIT_TIMEOUT)
+        decrementButton.click()
+
+        val changedText =
+            uiDevice.wait(
+                Until.findObject(By.res(packageName, "totalCountTextView")),
+                WAIT_TIMEOUT
+            )
+
+        assertEquals(changedText.text, TEST_NUMBER_OF_RESULTS_MINUS_1)
+    }
+
+    @Test
+    fun test_incrementButtonIsWork() {
+
+        val decrementButton =
+            uiDevice.wait(Until.findObject(By.res(packageName, INCREMENT_BUTTON_NAME)), WAIT_TIMEOUT)
+        decrementButton.click()
+
+        val changedText =
+            uiDevice.wait(
+                Until.findObject(By.res(packageName, "totalCountTextView")),
+                WAIT_TIMEOUT
+            )
+
+        assertEquals(changedText.text, TEST_NUMBER_OF_RESULTS_PLUS_1)
+    }
+
+    @Test
+    fun test_incrementButtonIsWork2() {
+
+        val decrementButton =
+            uiDevice.wait(Until.findObject(By.res(packageName, INCREMENT_BUTTON_NAME)), WAIT_TIMEOUT)
+        decrementButton.click()
+
+        val changedText =
+            uiDevice.wait(
+                Until.findObject(By.res(packageName, "totalCountTextView")),
+                WAIT_TIMEOUT
+            )
+
+        assertNotEquals(changedText.text, TEST_NUMBER_OF_RESULTS_ZERO)
+    }
+
+}
