@@ -4,10 +4,12 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
+
 import com.geekbrains.tests.R
 import com.geekbrains.tests.presenter.details.DetailsPresenter
 import com.geekbrains.tests.presenter.details.PresenterDetailsContract
 import kotlinx.android.synthetic.main.activity_details.*
+
 import java.util.*
 
 class DetailsActivity : AppCompatActivity(), ViewDetailsContract {
@@ -30,6 +32,16 @@ class DetailsActivity : AppCompatActivity(), ViewDetailsContract {
 
     override fun setCount(count: Int) {
         setCountText(count)
+    }
+
+    override fun onStart() {
+        super.onStart()
+        presenter.onAttach(this)
+    }
+
+    override fun onDestroy() {
+        presenter.onDetach()
+        super.onDestroy()
     }
 
     private fun setCountText(count: Int) {
