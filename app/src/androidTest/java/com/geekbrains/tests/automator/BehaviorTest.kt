@@ -9,6 +9,9 @@ import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.uiautomator.By
 import androidx.test.uiautomator.UiDevice
 import androidx.test.uiautomator.Until
+import com.geekbrains.tests.TEST_RESPONSE_SEARCH_COUNT
+import com.geekbrains.tests.TEST_TOTAL_SEARCH_TEXT
+import com.geekbrains.tests.WAIT_TIMEOUT
 import junit.framework.TestCase.assertEquals
 import junit.framework.TestCase.assertNotNull
 import org.junit.Before
@@ -33,11 +36,7 @@ class BehaviorTest {
         intent!!.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
         context.startActivity(intent)
 
-        uiDevice.wait(Until.hasObject(By.pkg(packageName).depth(0)), TIMEOUT)
-    }
-
-    companion object {
-        private const val TIMEOUT = 50000L
+        uiDevice.wait(Until.hasObject(By.pkg(packageName).depth(0)), WAIT_TIMEOUT)
     }
 
     @Test
@@ -59,10 +58,10 @@ class BehaviorTest {
 
         val changedText = uiDevice.wait(
             Until.findObject(By.res(packageName, "totalCountTextView")),
-            TIMEOUT
+            WAIT_TIMEOUT
         )
 
-        assertEquals(changedText.text.toString(), "Number of results: 42")
+        assertEquals(changedText.text.toString(), TEST_TOTAL_SEARCH_TEXT)
     }
 
     @Test
@@ -80,9 +79,9 @@ class BehaviorTest {
         toDetails.click()
 
         val changedText =
-            uiDevice.wait(Until.findObject(By.res(packageName, "totalCountTextView")), TIMEOUT)
+            uiDevice.wait(Until.findObject(By.res(packageName, "totalCountTextView")), WAIT_TIMEOUT)
 
-        assertEquals(changedText.text, "Number of results: 42")
+        assertEquals(changedText.text, TEST_TOTAL_SEARCH_TEXT)
     }
 
 
