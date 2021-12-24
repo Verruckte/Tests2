@@ -1,8 +1,9 @@
 package com.geekbrains.tests.repository
 
-import com.geekbrains.tests.model.SearchResponse
-import com.geekbrains.tests.model.SearchResult
-import com.geekbrains.tests.presenter.RepositoryContract
+import com.afrosin.apptests.model.SearchResponse
+import com.afrosin.apptests.model.SearchResult
+import com.afrosin.apptests.presenter.RepositoryContract
+import io.reactivex.Observable
 import retrofit2.Response
 import kotlin.random.Random
 
@@ -13,6 +14,10 @@ internal class FakeGitHubRepository : RepositoryContract {
         callback: RepositoryCallback
     ) {
         callback.handleGitHubResponse(Response.success(getFakeResponce()))
+    }
+
+    override fun searchGithub(query: String): Observable<SearchResponse> {
+        return Observable.just(getFakeResponce())
     }
 
     private fun getFakeResponce(): SearchResponse {
@@ -38,5 +43,9 @@ internal class FakeGitHubRepository : RepositoryContract {
         }
 
         return SearchResponse(list.size, list)
+    }
+
+    override suspend fun searchGithubAsync(query: String): SearchResponse {
+        return getFakeResponce()
     }
 }
